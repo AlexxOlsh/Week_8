@@ -21,7 +21,11 @@ async def get_user_by_id(user_id: int):
 
 @app.post("/users/", response_model=User)
 async def create_user(user: User):
-    db_users.append(user)
+    find_user = next((u for u in db_users if u.id == user.id), None)
+    if find_user is None:
+        db_users.append(user)
+    else:
+        raise HTTPException(status_code=404, detail="User already exist")
     return user
 
 
